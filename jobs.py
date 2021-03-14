@@ -37,12 +37,15 @@ def init_scheduled_tasks(config):
     for zone in config['zones']:
         # zone['start'] have the format '22:30'
         # from https://stackoverflow.com/a/30393162/3969110
-        print('schedule start of zone %s: %s' % (zone['name'], zone['start']))
-        schedule.every().day.at(zone['start']).do(
-            start_irrigation, zone['port'], power_port)
-        print('schedule end of zone %s: %s' % (zone['name'], zone['end']))
-        schedule.every().day.at(zone['end']).do(
-            stop_irrigation, zone['port'], power_port)
+        if zone['enabled']:
+            print('schedule start of zone %s: %s' %
+                  (zone['name'], zone['start']))
+            schedule.every().day.at(zone['start']).do(
+                start_irrigation, zone['port'], power_port)
+            print('schedule end of zone %s: %s' %
+                  (zone['name'], zone['end']))
+            schedule.every().day.at(zone['end']).do(
+                stop_irrigation, zone['port'], power_port)
 
 
 def update_config(event):

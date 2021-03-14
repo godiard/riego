@@ -3,14 +3,17 @@
     {"name": "Patio sombra",
     "port": 14,
     "start": "22:00",
-    "end": "22:05"},
+    "end": "22:05",
+    "enabled": true},
     {"name": "Patio sol",
      "port": 15,
      "start": "22:30",
-     "end": "22:36"},
+     "end": "22:36",
+     "enabled": true},
     {"name": "Jardin",
      "port": 18,
-     "start": "22:30",
-     "end": "22:36"}
+     "start": "23:00",
+     "end": "23:05",
+     "enabled": false}
   ]
 }
