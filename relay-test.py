@@ -17,9 +17,8 @@ SECONDS = int(sys.argv[2])
 relay = gpiozero.OutputDevice(
     RELAY_PIN, active_high=False, initial_value=False)
 
-relay.on() # switch off
+relay.on()  # switch off
 time.sleep(SECONDS)
-relay.off() # switch on
+relay.off()  # switch on
 
-print(relay.value) # see if on or off
-
+print(relay.value)  # see if on or off
