@@ -3,6 +3,8 @@ import json
 import schedule
 import time
 
+from datetime import datetime
+
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 
@@ -12,19 +14,25 @@ config = None
 
 
 def read_config():
+    config = None
     with open(CONFIG_FILE_NAME) as config_file:
-        config = json.load(config_file)
+        try:
+            config = json.load(config_file)
+        except Exception:
+            print('Error reading json config file')
     return config
 
 
 def start_irrigation(port, power_port):
     # open zone port
+    print(datetime.now())
     print('Open zone port %s' % port)
     # open power port
     print('Open power port %s' % power_port)
 
 
 def stop_irrigation(port, power_port):
+    print(datetime.now())
     # close zone port
     print('Close zone port %s' % port)
     # close power port
@@ -34,6 +42,7 @@ def stop_irrigation(port, power_port):
 def init_scheduled_tasks(config):
     print('config: %s' % config)
     power_port = config['power']['port']
+    schedule.clear()
     for zone in config['zones']:
         # zone['start'] have the format '22:30'
         # from https://stackoverflow.com/a/30393162/3969110
@@ -52,11 +61,11 @@ def update_config(event):
     global config
     print('CONFIG FILE UPDATED')
     updated_config = read_config()
-    if updated_config == config:
-        print('FILE NOT CHANGED')
-    else:
-        config = updated_config
-        init_scheduled_tasks(config)
+    if update_config is not None:
+        if updated_config != config:
+            config = updated_config
+            if config:
+                init_scheduled_tasks(config)
 
 
 config = read_config()
@@ -70,11 +79,8 @@ observer.schedule(event_handler, CONFIG_FILE_NAME, recursive=False)
 observer.start()
 try:
     while True:
-        time.sleep(1)
+        schedule.run_pending()
+        time.sleep(30)  # wait 30 seconds
 except KeyboardInterrupt:
     observer.stop()
 observer.join()
-
-while True:
-    schedule.run_pending()
-    time.sleep(60)  # wait one minute
