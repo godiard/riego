@@ -8,9 +8,15 @@ from datetime import datetime
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 
+try:
+    import gpiozero
+except Exception:
+    import fakegpio as gpiozero
+
 CONFIG_FILE_NAME = 'config.json'
 
 config = None
+relays = None
 
 
 def read_config():
@@ -24,19 +30,36 @@ def read_config():
 
 
 def start_irrigation(port, power_port):
+    global relays
     # open zone port
     print(datetime.now())
-    print('Open zone port %s' % port)
+    relays[port].on()
     # open power port
-    print('Open power port %s' % power_port)
+    relays[power_port].on()
 
 
 def stop_irrigation(port, power_port):
     print(datetime.now())
-    # close zone port
-    print('Close zone port %s' % port)
     # close power port
-    print('Close power port %s' % power_port)
+    relays[power_port].off()
+    # close zone port
+    relays[port].off()
+
+
+def init_relays(config):
+    global relays
+    relays = {}
+    power_port = config['power']['port']
+    print('Initilize power rele, port %d' % power_port)
+    power_relay = gpiozero.OutputDevice(
+        power_port, active_high=False, initial_value=False)
+    relays[power_port] = power_relay
+
+    for zone in config['zones']:
+        print('Initialize zone %s, port %d' % (zone['name'], zone['port']))
+        zone_relay = gpiozero.OutputDevice(
+            zone['port'], active_high=False, initial_value=False)
+        relays[zone['port']] = zone_relay
 
 
 def init_scheduled_tasks(config):
@@ -69,6 +92,7 @@ def update_config(event):
 
 
 config = read_config()
+init_relays(config)
 init_scheduled_tasks(config)
 
 event_handler = FileSystemEventHandler()
