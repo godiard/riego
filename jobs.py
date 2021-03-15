@@ -11,6 +11,7 @@ from watchdog.events import FileSystemEventHandler
 try:
     import gpiozero
 except Exception:
+    print('Can not find gpiozero, import fake library')
     import fakegpio as gpiozero
 
 CONFIG_FILE_NAME = 'config.json'
