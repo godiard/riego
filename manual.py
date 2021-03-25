@@ -20,5 +20,5 @@ if __name__ == '__main__':
         power_port = irrigation_manager.config['power']['port']
         zone_port = zone['port']
         irrigation_manager.start_irrigation(zone_port, power_port)
-        time.sleep(30 * minutes)
+        time.sleep(60 * minutes)
         irrigation_manager.stop_irrigation(zone_port, power_port)
