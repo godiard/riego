@@ -7,7 +7,7 @@ from watchdog.events import FileSystemEventHandler
 
 from irrigation import IrrigationManager, CONFIG_FILE_NAME
 
-irrigation_manager = IrrigationManager()
+irrigation_manager = IrrigationManager(enable_schedule=True)
 
 event_handler = FileSystemEventHandler()
 event_handler.on_modified = irrigation_manager.update_config

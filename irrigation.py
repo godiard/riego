@@ -14,11 +14,13 @@ CONFIG_FILE_NAME = 'config.json'
 
 class IrrigationManager:
 
-    def __init__(self):
+    def __init__(self, enable_schedule: bool = False):
         self.config = self.read_config()
         self.relays = None
         self.init_relays()
-        self.init_scheduled_tasks(self.config)
+        self._enable_schedule = enable_schedule
+        if self._enable_schedule:
+            self.init_scheduled_tasks(self.config)
 
     def read_config(self):
         config = None
@@ -80,5 +82,5 @@ class IrrigationManager:
         if updated_config is not None:
             if updated_config != self.config:
                 self.config = updated_config
-                if self.config:
+                if self.config and self._enable_schedule:
                     self.init_scheduled_tasks(self.config)
