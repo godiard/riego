@@ -53,11 +53,15 @@ class IrrigationManager:
             power_port, active_high=False, initial_value=False)
         self.relays[power_port] = power_relay
 
+        ports_initialized = []
         for zone in self.config['zones']:
-            print('Initialize zone %s, port %d' % (zone['name'], zone['port']))
-            zone_relay = gpiozero.OutputDevice(
-                zone['port'], active_high=False, initial_value=False)
-            self.relays[zone['port']] = zone_relay
+            port = zone['port']
+            if port not in ports_initialized:
+                ports_initialized.append(port)
+                print('Initialize zone %s, port %d' % (zone['name'], port))
+                zone_relay = gpiozero.OutputDevice(
+                    port, active_high=False, initial_value=False)
+                self.relays[port] = zone_relay
 
     def init_scheduled_tasks(self, config):
         print('config: %s' % config)
